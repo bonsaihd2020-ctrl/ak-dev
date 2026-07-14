@@ -1,6 +1,7 @@
 from __future__ import annotations
 import json
 import time
+import threading
 from typing import Any, Dict, List, Optional
 
 
@@ -41,6 +42,7 @@ class ExperienceEntry:
 
 class Memory:
     def __init__(self) -> None:
+        self._lock = threading.Lock()
         self.conversation: List[Dict[str, Any]] = []
         self.steps_completed: List[Dict[str, Any]] = []
         self.files_modified: List[str] = []
@@ -56,16 +58,17 @@ class Memory:
         self.agent_monologue: List[Dict[str, Any]] = []
 
     def add_message(self, role: str, content: str, agent: str = "", extra: Optional[Dict] = None) -> Dict[str, Any]:
-        msg_id = f"msg_{len(self.conversation)}_{int(time.time() * 1000)}"
-        msg: Dict[str, Any] = {"id": msg_id, "role": role, "content": content, "timestamp": time.time()}
-        if agent:
-            msg["agent"] = agent
-        if extra:
-            msg.update(extra)
-        self.conversation.append(msg)
-        self.context_tokens_estimate += len(content) // 4
-        self._extract_keywords(content)
-        return msg
+        with self._lock:
+            msg_id = f"msg_{len(self.conversation)}_{int(time.time() * 1000)}"
+            msg: Dict[str, Any] = {"id": msg_id, "role": role, "content": content, "timestamp": time.time()}
+            if agent:
+                msg["agent"] = agent
+            if extra:
+                msg.update(extra)
+            self.conversation.append(msg)
+            self.context_tokens_estimate += len(content) // 4
+            self._extract_keywords(content)
+            return msg
 
     def get_messages_for_llm(self, system_prompt: str, max_messages: int = 50) -> List[Dict[str, str]]:
         messages = [{"role": "system", "content": system_prompt}]
@@ -159,11 +162,12 @@ class Memory:
                 self.collected_keywords.append(word)
 
     def add_monologue(self, agent: str, thought: str) -> None:
-        self.agent_monologue.append({
-            "agent": agent,
-            "thought": thought,
-            "timestamp": time.time(),
-        })
+        with self._lock:
+            self.agent_monologue.append({
+                "agent": agent,
+                "thought": thought,
+                "timestamp": time.time(),
+            })
 
     def get_recent_monologue(self, count: int = 5) -> List[Dict[str, Any]]:
         return self.agent_monologue[-count:]
@@ -175,10 +179,11 @@ class Memory:
         return self.current_plan
 
     def add_experience(self, task: str, outcome: str, tools_used: List[str], success: bool) -> None:
-        entry = ExperienceEntry(task, outcome, tools_used, success)
-        self.experience_pool.append(entry)
-        if len(self.experience_pool) > 50:
-            self.experience_pool = self.experience_pool[-50:]
+        with self._lock:
+            entry = ExperienceEntry(task, outcome, tools_used, success)
+            self.experience_pool.append(entry)
+            if len(self.experience_pool) > 50:
+                self.experience_pool = self.experience_pool[-50:]
 
     def get_relevant_experiences(self, task: str, limit: int = 3) -> List[Dict[str, Any]]:
         task_words = set(task.lower().split())
@@ -191,26 +196,29 @@ class Memory:
         return [s[1].to_dict() for s in scored[:limit] if s[0] > 0]
 
     def record_tool_call(self, tool_name: str, args: Dict, result: Dict) -> None:
-        self.tool_calls_log.append({
-            "tool": tool_name,
-            "args": args,
-            "result": result,
-            "timestamp": time.time(),
-        })
+        with self._lock:
+            self.tool_calls_log.append({
+                "tool": tool_name,
+                "args": args,
+                "result": result,
+                "timestamp": time.time(),
+            })
 
     def record_step(self, agent: str, description: str, status: str = "completed") -> None:
-        self.steps_completed.append({
-            "agent": agent,
-            "description": description,
-            "status": status,
-            "timestamp": time.time(),
-        })
+        with self._lock:
+            self.steps_completed.append({
+                "agent": agent,
+                "description": description,
+                "status": status,
+                "timestamp": time.time(),
+            })
 
     def track_file_change(self, path: str, created: bool = False) -> None:
-        if created and path not in self.files_created:
-            self.files_created.append(path)
-        if path not in self.files_modified:
-            self.files_modified.append(path)
+        with self._lock:
+            if created and path not in self.files_created:
+                self.files_created.append(path)
+            if path not in self.files_modified:
+                self.files_modified.append(path)
 
     def get_summary(self) -> Dict[str, Any]:
         return {
@@ -232,17 +240,18 @@ class Memory:
             self.context_tokens_estimate = sum(len(m.get("content", "")) for m in self.conversation) // 4
 
     def clear(self) -> None:
-        self.conversation.clear()
-        self.steps_completed.clear()
-        self.files_modified.clear()
-        self.files_created.clear()
-        self.tool_calls_log.clear()
-        self.context_tokens_estimate = 0
-        self.summaries.clear()
-        self.summarized_message_ids.clear()
-        self.agent_monologue.clear()
-        self.current_plan = None
-        self.collected_keywords.clear()
+        with self._lock:
+            self.conversation.clear()
+            self.steps_completed.clear()
+            self.files_modified.clear()
+            self.files_created.clear()
+            self.tool_calls_log.clear()
+            self.context_tokens_estimate = 0
+            self.summaries.clear()
+            self.summarized_message_ids.clear()
+            self.agent_monologue.clear()
+            self.current_plan = None
+            self.collected_keywords.clear()
 
     def to_dict(self) -> Dict[str, Any]:
         return {

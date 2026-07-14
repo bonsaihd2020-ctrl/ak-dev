@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import tempfile
+import time
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -12,7 +13,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from config import API_HOST, API_PORT, DEFAULT_PROVIDERS, SEARCH_BACKENDS
 from keystore import get_keystore
@@ -44,11 +45,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+_rate_limit_store: Dict[str, List[float]] = {}
+_RATE_LIMIT_WINDOW = 60.0
+_RATE_LIMIT_MAX = 30
+
+
+def _check_rate_limit(client_id: str = "default") -> bool:
+    now = time.time()
+    if client_id not in _rate_limit_store:
+        _rate_limit_store[client_id] = []
+    _rate_limit_store[client_id] = [t for t in _rate_limit_store[client_id] if now - t < _RATE_LIMIT_WINDOW]
+    if len(_rate_limit_store[client_id]) >= _RATE_LIMIT_MAX:
+        return False
+    _rate_limit_store[client_id].append(now)
+    return True
+
 
 class RunRequest(BaseModel):
-    task: str
-    provider: str = "openai"
-    model: str = "gpt-4o"
+    task: str = Field(..., min_length=1, max_length=50000)
+    provider: str = Field(default="openai", pattern=r"^[a-z0-9_-]+$")
+    model: str = Field(default="gpt-4o", pattern=r"^[a-zA-Z0-9._/-]+$")
     use_browser_token: bool = False
     context: Optional[Dict[str, Any]] = None
 
@@ -628,6 +644,10 @@ async def websocket_endpoint(websocket: WebSocket):
             msg = json.loads(data)
 
             if msg.get("type") == "run":
+                if not _check_rate_limit():
+                    await websocket.send_json({"event": "error", "message": "Rate limit exceeded. Try again later."})
+                    continue
+
                 task = msg.get("task", "")
                 provider_id = msg.get("provider", "openai")
                 model = msg.get("model", "gpt-4o")
