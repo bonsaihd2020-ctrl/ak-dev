@@ -2,10 +2,13 @@ from __future__ import annotations
 import json
 import time
 import threading
+import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Generator
 
 from keystore import get_keystore
+
+logger = logging.getLogger(__name__)
 
 
 class CircuitBreaker:
@@ -48,6 +51,7 @@ class CircuitBreaker:
             self._last_failure_time = now
             if self._failure_count >= self._failure_threshold:
                 self._state = self.OPEN
+                logger.warning("Circuit breaker OPENED after %d failures", self._failure_count)
 
     def can_request(self) -> bool:
         state = self.state
@@ -156,6 +160,7 @@ class OpenAICompatibleProvider(LLMProvider):
             except Exception as e:
                 last_error = e
                 self._breaker.record_failure()
+                logger.warning("Chat attempt %d failed for %s: %s", attempt + 1, self.provider_id, e)
                 if attempt < self._retry._max_retries and self._retry.is_retryable(e):
                     if self._retry.is_rate_limit(e):
                         delay = self._retry.get_rate_limit_delay(e)

@@ -2,10 +2,13 @@ from __future__ import annotations
 import json
 import os
 import platform
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from cryptography.fernet import Fernet
+
+logger = logging.getLogger(__name__)
 
 _KEY_FILE = "devin-clone-keystore.enc"
 _SALT_FILE = "devin-clone-salt.bin"
@@ -27,7 +30,11 @@ def _keystore_dir() -> Path:
 def _derive_key() -> bytes:
     import base64
     import hashlib
-    machine_id = f"{platform.node()}-{os.getlogin() if hasattr(os, 'getlogin') else 'devin'}"
+    try:
+        login_name = os.getlogin()
+    except OSError:
+        login_name = "devin"
+    machine_id = f"{platform.node()}-{login_name}"
     digest = hashlib.sha256(machine_id.encode()).digest()
     return base64.urlsafe_b64encode(digest[:32])
 
@@ -42,16 +49,24 @@ class KeyStore:
 
     def _load(self) -> None:
         if self._path.exists():
-            raw = self._path.read_bytes()
-            decrypted = self._fernet.decrypt(raw)
-            self._data = json.loads(decrypted.decode("utf-8"))
+            try:
+                raw = self._path.read_bytes()
+                decrypted = self._fernet.decrypt(raw)
+                self._data = json.loads(decrypted.decode("utf-8"))
+            except Exception as e:
+                logger.warning("Failed to load keystore, starting fresh: %s", e)
+                self._data = {}
         else:
             self._data = {}
 
     def _save(self) -> None:
-        raw = json.dumps(self._data, indent=2).encode("utf-8")
-        encrypted = self._fernet.encrypt(raw)
-        self._path.write_bytes(encrypted)
+        try:
+            raw = json.dumps(self._data, indent=2).encode("utf-8")
+            encrypted = self._fernet.encrypt(raw)
+            self._path.write_bytes(encrypted)
+        except Exception as e:
+            logger.error("Failed to save keystore: %s", e)
+            raise
 
     def add_key(self, provider_id: str, key: str, key_type: str = "api_key") -> None:
         if provider_id not in self._data:
