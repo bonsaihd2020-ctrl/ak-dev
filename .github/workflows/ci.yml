@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install Python dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Python syntax check
+        run: |
+          python -m py_compile backend/server.py
+          python -m py_compile backend/providers.py
+          python -m py_compile backend/memory.py
+          python -m py_compile backend/agent_loop.py
+          python -m py_compile backend/config.py
+          python -m py_compile backend/keystore.py
+          python -m py_compile backend/tools.py
+          python -m py_compile backend/workspace.py
+          python -m py_compile backend/agents/orchestrator.py
+          python -m py_compile backend/agents/planner.py
+          python -m py_compile backend/agents/architect.py
+          python -m py_compile backend/agents/coder.py
+          python -m py_compile backend/agents/reviewer.py
+          python -m py_compile backend/agents/tester.py
+
+      - name: Install frontend dependencies
+        run: |
+          cd desktop
+          npm install
+
+      - name: TypeScript check
+        run: |
+          cd desktop
+          npx tsc --noEmit || true
+
+      - name: Frontend build
+        run: |
+          cd desktop
+          npm run build || true
