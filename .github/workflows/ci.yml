@@ -45,6 +45,7 @@ jobs:
           python -m py_compile backend/agents/coder.py
           python -m py_compile backend/agents/reviewer.py
           python -m py_compile backend/agents/tester.py
+          python -m py_compile backend/test_broken.py
 
       - name: Install frontend dependencies
         run: |
