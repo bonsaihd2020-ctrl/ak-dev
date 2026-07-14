@@ -1,0 +1,22 @@
+{
+  "name": "devin-clone",
+  "version": "1.0.0",
+  "description": "Devin-style AI Coding Agent - Single .exe Desktop App",
+  "private": true,
+  "scripts": {
+    "install:backend": "cd backend && pip install -r requirements.txt",
+    "install:desktop": "cd desktop && npm install",
+    "install:all": "npm run install:backend && npm run install:desktop",
+    "dev:backend": "cd backend && python -m uvicorn server:app --host 127.0.0.1 --port 18900 --reload",
+    "dev:desktop": "cd desktop && npm run dev",
+    "dev": "start cmd /k \"npm run dev:backend\" && npm run dev:desktop",
+    "build:backend": "cd backend && pyinstaller --onefile --name backend --distpath ../dist --workpath build --specpath . server.py",
+    "build:desktop": "cd desktop && npm run build:electron",
+    "build:all": "npm run build:backend && npm run build:desktop",
+    "sandbox:build": "docker build -t devin-sandbox:latest ./sandbox",
+    "sandbox:run": "docker run -d --name devin-sandbox -p 6080:6080 -p 5900:5900 --cap-add SYS_ADMIN --security-opt seccomp=unconfined devin-sandbox:latest"
+  },
+  "keywords": ["ai", "coding-agent", "devin", "electron"],
+  "author": "",
+  "license": "MIT"
+}

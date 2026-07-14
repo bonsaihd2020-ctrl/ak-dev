@@ -1,0 +1,13 @@
+node_modules/
+dist/
+dist-electron/
+build/
+__pycache__/
+*.pyc
+.env
+*.exe
+*.spec
+backend/data/
+sandbox/workspace/
+*.log
+.DS_Store

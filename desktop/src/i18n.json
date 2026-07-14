@@ -1,0 +1,202 @@
+{
+  "en": {
+    "app_name": "Devin Clone",
+    "sidebar": {
+      "provider": "PROVIDER",
+      "model": "MODEL",
+      "settings": "Settings",
+      "workspace": "Workspace",
+      "terminal": "Terminal",
+      "desktop": "Live Desktop",
+      "export": "Export",
+      "dashboard": "Dashboard"
+    },
+    "chat": {
+      "placeholder": "Describe your task...",
+      "send": "Send",
+      "pause": "Pause",
+      "stop": "Stop",
+      "resume": "Resume"
+    },
+    "workspace": {
+      "title": "Workspace",
+      "connect": "Connect",
+      "no_workspace": "No workspace connected",
+      "click_connect": "Click Connect to select a folder"
+    },
+    "settings": {
+      "title": "Settings & Providers",
+      "api_key": "API Key",
+      "save": "Save",
+      "test": "Test",
+      "browser_login": "Browser Login (Experimental)",
+      "browser_login_desc": "Login via browser instead of API key. May break when provider changes their site.",
+      "login_browser": "Login with Browser",
+      "model_selection": "Model Selection",
+      "free_only": "Show free models only",
+      "save_model": "Save Model Selection",
+      "web_search": "Web Search Keys",
+      "active_backend": "Active backend:"
+    },
+    "git": {
+      "title": "Git",
+      "init": "Init",
+      "commit": "Commit",
+      "recent_commits": "Recent Commits"
+    },
+    "sessions": {
+      "title": "Sessions",
+      "restore": "Restore",
+      "delete": "Delete",
+      "no_sessions": "No saved sessions yet"
+    },
+    "dashboard": {
+      "title": "Progress Dashboard",
+      "current_task": "Current Task",
+      "time": "Time",
+      "tokens": "Tokens",
+      "tool_calls": "Tool Calls",
+      "cost": "Cost",
+      "phase_breakdown": "Phase Breakdown",
+      "all_time": "All-Time Totals",
+      "tasks": "Tasks",
+      "total_time": "Total Time",
+      "total_tokens": "Total Tokens",
+      "total_cost": "Total Cost",
+      "task_history": "Task History"
+    },
+    "templates": {
+      "title": "Project Templates",
+      "create": "Create Project",
+      "select_template": "Select Template",
+      "target_dir": "Target Directory",
+      "project_name": "Project Name",
+      "create_project": "Create Project"
+    },
+    "plugins": {
+      "title": "Plugins & Extensions",
+      "load": "Load",
+      "unload": "Unload",
+      "install": "Install",
+      "uninstall": "Uninstall",
+      "create_template": "Create Plugin Template"
+    }
+  },
+  "hi": {
+    "app_name": "डेविन क्लोन",
+    "sidebar": {
+      "provider": "प्रदाता",
+      "model": "मॉडल",
+      "settings": "सेटिंग्स",
+      "workspace": "वर्कस्पेस",
+      "terminal": "टर्मिनल",
+      "desktop": "लाइव डेस्कटॉप",
+      "export": "एक्सपोर्ट",
+      "dashboard": "डैशबोर्ड"
+    },
+    "chat": {
+      "placeholder": "अपना कार्य बताएं...",
+      "send": "भेजें",
+      "pause": "रोकें",
+      "stop": "बंद करें",
+      "resume": "जारी रखें"
+    },
+    "workspace": {
+      "title": "वर्कस्पेस",
+      "connect": "कनेक्ट",
+      "no_workspace": "कोई वर्कस्पेस कनेक्ट नहीं",
+      "click_connect": "फ़ोल्डर चुनने के लिए कनेक्ट दबाएं"
+    },
+    "settings": {
+      "title": "सेटिंग्स और प्रदाता",
+      "api_key": "API कुंजी",
+      "save": "सेव करें",
+      "test": "टेस्ट",
+      "browser_login": "ब्राउज़र लॉगिन (प्रयोगात्मक)",
+      "browser_login_desc": "API कुंजी के बजाय ब्राउज़र से लॉगिन करें।",
+      "login_browser": "ब्राउज़र से लॉगिन करें",
+      "model_selection": "मॉडल चयन",
+      "free_only": "केवल मुफ्त मॉडल दिखाएं",
+      "save_model": "मॉडल सेव करें",
+      "web_search": "वेब सर्च कुंजी",
+      "active_backend": "सक्रिय बैकएंड:"
+    },
+    "git": {
+      "title": "गिट",
+      "init": "इनिट",
+      "commit": "कमिट",
+      "recent_commits": "हाल की कमिट"
+    },
+    "sessions": {
+      "title": "सेशंस",
+      "restore": "रीस्टोर",
+      "delete": "हटाएं",
+      "no_sessions": "अभी तक कोई सेव नहीं"
+    },
+    "dashboard": {
+      "title": "प्रगति डैशबोर्ड",
+      "current_task": "वर्तमान कार्य",
+      "time": "समय",
+      "tokens": "टोकन",
+      "tool_calls": "टूल कॉल",
+      "cost": "लागत",
+      "phase_breakdown": "चरण विवरण",
+      "all_time": "कुल योग",
+      "tasks": "कार्य",
+      "total_time": "कुल समय",
+      "total_tokens": "कुल टोकन",
+      "total_cost": "कुल लागत",
+      "task_history": "कार्य इतिहास"
+    },
+    "templates": {
+      "title": "प्रोजेक्ट टेम्पलेट्स",
+      "create": "प्रोजेक्ट बनाएं",
+      "select_template": "टेम्पलेट चुनें",
+      "target_dir": "टार्गेट फ़ोल्डर",
+      "project_name": "प्रोजेक्ट नाम",
+      "create_project": "प्रोजेक्ट बनाएं"
+    },
+    "plugins": {
+      "title": "प्लगइन और एक्सटेंशन",
+      "load": "लोड",
+      "unload": "अनलोड",
+      "install": "इंस्टॉल",
+      "uninstall": "अनइंस्टॉल",
+      "create_template": "प्लगइन टेम्पलेट बनाएं"
+    }
+  },
+  "ur": {
+    "app_name": "ڈیوین کلون",
+    "sidebar": {
+      "provider": "فرہم کنندہ",
+      "model": "ماڈل",
+      "settings": "ترتیبات",
+      "workspace": "ورک اسپیس",
+      "terminal": "ٹرمینل",
+      "desktop": "لائیو ڈیسکٹاپ",
+      "export": "برآمد",
+      "dashboard": "ڈیش بورڈ"
+    },
+    "chat": {
+      "placeholder": "اپنا کام بتائیں...",
+      "send": "بھیجیں",
+      "pause": "روکیں",
+      "stop": "بند کریں",
+      "resume": "جاری رکھیں"
+    },
+    "settings": {
+      "title": "ترتیبات اور فرہم کنندے",
+      "api_key": "API کلید",
+      "save": "محفوظ کریں",
+      "test": "ٹیسٹ",
+      "browser_login": "براؤزر لاگ ان (تجرباتی)",
+      "browser_login_desc": "API کلید کی جگہ براؤزر سے لاگ ان کریں۔",
+      "login_browser": "براؤزر سے لاگ ان کریں",
+      "model_selection": "ماڈل انتخاب",
+      "free_only": "صرف مفت ماڈل دکھائیں",
+      "save_model": "ماڈل محفوظ کریں",
+      "web_search": "ویب تلاش کلیدیں",
+      "active_backend": "فعال بیک اینڈ:"
+    }
+  }
+}
