@@ -1,0 +1,38 @@
+# .warpfix.yaml — WarpFix configuration
+version: 1
+
+repair:
+  auto_fix: true                  # Enable automatic fix PRs
+  confidence_threshold: 0.75      # Minimum AI confidence to open PR (0.0-1.0)
+  max_retries: 2                  # Max repair attempts per failure
+  sandbox_timeout: 300            # Sandbox validation timeout (seconds)
+
+quality_gates:
+  min_confidence: 0.8             # Block PRs below this confidence
+  require_tests: true             # Require test pass in sandbox
+  max_patch_lines: 50             # Max lines changed per fix
+  block_on_security: true         # Block fixes with security concerns
+
+review:
+  auto_comment: true              # Comment on existing PRs with analysis
+  severity_labels: true           # Add severity labels to issues
+  mermaid_diagrams: true          # Include architecture diagrams
+  effort_estimates: true          # Estimate fix effort in hours
+
+ignore:
+  paths:
+    - "node_modules/**"
+    - "dist/**"
+    - "*.lock"
+  errors:
+    - "ECONNRESET"                # Ignore transient network errors
+    - "rate limit"                # Ignore rate limiting
+
+notifications:
+  slack:
+    channel: "#ci-repairs"
+    on_repair: true
+    on_failure: true
+  email:
+    to: "team@yourcompany.com"
+    on_security: true
